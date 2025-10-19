@@ -1,5 +1,5 @@
 const std = @import("std");
-const libquark = @import("quark");
+const quark = @import("quark");
 
 const HEX_INPUT_ID = 1;
 const R_INPUT_ID = 2;
@@ -12,34 +12,64 @@ var result_text: [256]u8 = undefined;
 var result_len: usize = 0;
 
 pub fn main() !void {
-    var window = try libquark.Window.init("QuarkColorConverter", 600, 500);
+    var window = try quark.Window.init("QuarkColorConverter", 450, 500);
     defer window.deinit();
 
-    _ = try window.addLabel("QuarkColorConverter", 20, 20);
-    _ = try window.addLabel("Converting hex/RGB to Quark's float values made simple", 20, 45);
+    var root = quark.Widget.Column.init(window.allocator);
+    root.alignment = .start;
 
-    _ = try window.addLabel("Hex Color:", 20, 90);
-    _ = try window.addTextField(20, 115, 300, 35, "#", HEX_INPUT_ID);
+    _ = try root.add(.{ .label = quark.Widget.Label.init("QuarkColorConverter") });
+    _ = try root.add(.{ .label = quark.Widget.Label.init("Effortlessly convert color codes to Quark's float values") });
+    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(10) });
 
-    _ = try window.addLabel("RGB Values:", 20, 170);
-    _ = try window.addLabel("R:", 20, 200);
-    _ = try window.addTextField(50, 195, 80, 35, "0", R_INPUT_ID);
-    _ = try window.addLabel("G:", 150, 200);
-    _ = try window.addTextField(180, 195, 80, 35, "0", G_INPUT_ID);
-    _ = try window.addLabel("B:", 280, 200);
-    _ = try window.addTextField(310, 195, 80, 35, "0", B_INPUT_ID);
+    _ = try root.add(.{ .label = quark.Widget.Label.init("Hex Color:") });
+    var hex_field = quark.Widget.TextField.init(HEX_INPUT_ID, "#");
+    hex_field.width = 300;
+    hex_field.height = 35;
+    _ = try root.add(.{ .textfield = hex_field });
+    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(10) });
 
-    _ = try window.addButton(20, 260, 120, 40, CONVERT_BUTTON_ID, "Convert");
-    _ = try window.addButton(150, 260, 120, 40, CLEAR_BUTTON_ID, "Clear");
+    _ = try root.add(.{ .label = quark.Widget.Label.init("RGB Values:") });
+    var rgb_row = quark.Widget.Row.init(window.allocator);
+    rgb_row.spacing = 5;
 
-    _ = try window.addLabel("Quark Float Values:", 20, 320);
+    _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("R:") });
+    var r_field = quark.Widget.TextField.init(R_INPUT_ID, "0");
+    r_field.width = 80;
+    r_field.height = 35;
+    _ = try rgb_row.add(.{ .textfield = r_field });
 
-    const initial = "Enter hex or RGB values and click Convert";
+    _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(20) });
+    _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("G:") });
+    var g_field = quark.Widget.TextField.init(G_INPUT_ID, "0");
+    g_field.width = 80;
+    g_field.height = 35;
+    _ = try rgb_row.add(.{ .textfield = g_field });
+
+    _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(20) });
+    _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("B:") });
+    var b_field = quark.Widget.TextField.init(B_INPUT_ID, "0");
+    b_field.width = 80;
+    b_field.height = 35;
+    _ = try rgb_row.add(.{ .textfield = b_field });
+
+    _ = try root.add(.{ .row = rgb_row });
+    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(10) });
+
+    var button_row = quark.Widget.Row.init(window.allocator);
+    button_row.spacing = 10;
+    _ = try button_row.add(.{ .button = quark.Widget.Button.init("Convert", CONVERT_BUTTON_ID) });
+    _ = try button_row.add(.{ .button = quark.Widget.Button.init("Clear", CLEAR_BUTTON_ID) });
+    _ = try root.add(.{ .row = button_row });
+    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(20) });
+
+    _ = try root.add(.{ .label = quark.Widget.Label.init("Quark Float Values:") });
+    const initial = "Enter either your HEX or RGB values and click \"Convert\""; // There's a bug w/ this, you can tell; fix this later.
     @memcpy(result_text[0..initial.len], initial);
     result_len = initial.len;
+    _ = try root.add(.{ .label = quark.Widget.Label.init(result_text[0..result_len]) });
 
-    const result_label_idx = window.labels.items.len;
-    _ = try window.addLabel(result_text[0..result_len], 20, 350);
+    try window.setLayout(.{ .column = root });
 
     while (window.update()) |event| {
         if (event) |e| {
@@ -47,10 +77,8 @@ pub fn main() !void {
                 .button_clicked => |id| {
                     if (id == CONVERT_BUTTON_ID) {
                         handleConvert(&window);
-                        window.labels.items[result_label_idx].text = result_text[0..result_len];
                     } else if (id == CLEAR_BUTTON_ID) {
                         handleClear(&window);
-                        window.labels.items[result_label_idx].text = result_text[0..result_len];
                     }
                 },
                 .textfield_submitted => |data| {
@@ -60,16 +88,15 @@ pub fn main() !void {
                         data.id == B_INPUT_ID)
                     {
                         handleConvert(&window);
-                        window.labels.items[result_label_idx].text = result_text[0..result_len];
                     }
                 },
-                else => {},
+                else => continue,
             }
         }
     }
 }
 
-fn handleConvert(window: *libquark.Window) void {
+fn handleConvert(window: *quark.Window) void {
     const hex_field = &window.textfields.items[0];
     const hex_text = hex_field.getText();
 
@@ -90,19 +117,19 @@ fn handleConvert(window: *libquark.Window) void {
     const b_field = &window.textfields.items[3];
 
     const r = std.fmt.parseInt(u8, r_field.getText(), 10) catch {
-        const err = "Invalid R value (must be 0-255)";
+        const err = "Invalid R value, it must be between 0-255";
         @memcpy(result_text[0..err.len], err);
         result_len = err.len;
         return;
     };
     const g = std.fmt.parseInt(u8, g_field.getText(), 10) catch {
-        const err = "Invalid G value (must be 0-255)";
+        const err = "Invalid G value, it must be between 0-255";
         @memcpy(result_text[0..err.len], err);
         result_len = err.len;
         return;
     };
     const b = std.fmt.parseInt(u8, b_field.getText(), 10) catch {
-        const err = "Invalid B value (must be 0-255)";
+        const err = "Invalid B value, it must be between 0-255";
         @memcpy(result_text[0..err.len], err);
         result_len = err.len;
         return;
@@ -111,12 +138,12 @@ fn handleConvert(window: *libquark.Window) void {
     formatResult(.{ r, g, b });
 }
 
-fn handleClear(window: *libquark.Window) void {
+fn handleClear(window: *quark.Window) void {
     for (window.textfields.items) |*tf| {
         tf.clear();
     }
 
-    const cleared = "Cleared! Enter new values.";
+    const cleared = "Cleared! Enter your new values";
     @memcpy(result_text[0..cleared.len], cleared);
     result_len = cleared.len;
 }
