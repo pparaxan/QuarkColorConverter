@@ -1,29 +1,26 @@
+// I'll prob refactor this again later
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const quark_dep = b.dependency("quark", .{
-        .target = target,
-        .optimize = optimize,
-    });
+    const libquark = b.dependency("quark", .{});
+    const libquarka = libquark.artifact("quark");
 
     const exe = b.addExecutable(.{
-        .name = "quark_color_converter",
+        .name = "QuarkColorConverter",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/main.zig"),
             .target = target,
             .optimize = optimize,
             .imports = &.{
-                .{ .name = "quark", .module = quark_dep.module("quark") },
+                .{ .name = "quark", .module = libquarka.root_module },
             },
         }),
     });
 
-    const quark_lib = quark_dep.artifact("quark");
-    exe.linkLibrary(quark_lib);
-    exe.linkLibC();
+    exe.linkLibrary(libquarka);
 
     const vulkan_sdk = std.process.getEnvVarOwned(b.allocator, "VULKAN_SDK") catch |err| {
         std.debug.print("Vulkan SDK wasn't found.\n", .{});
@@ -44,9 +41,9 @@ pub fn build(b: *std.Build) void {
         exe.linkSystemLibrary("kernel32");
     }
 
-    const quark_shaders = quark_dep.namedWriteFiles("shaders");
+    const libquark_shaders = libquark.namedWriteFiles("shaders");
     const install_shaders = b.addInstallDirectory(.{
-        .source_dir = quark_shaders.getDirectory(),
+        .source_dir = libquark_shaders.getDirectory(),
         .install_dir = .bin,
         .install_subdir = "shaders",
     });
@@ -61,6 +58,6 @@ pub fn build(b: *std.Build) void {
         run_cmd.addArgs(args);
     }
 
-    const run_step = b.step("run", "Run the color converter");
+    const run_step = b.step("run", "Execute Quark's color converter tool");
     run_step.dependOn(&run_cmd.step);
 }
