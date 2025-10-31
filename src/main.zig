@@ -12,10 +12,12 @@ var result_text: [256]u8 = undefined;
 var result_len: usize = 0;
 
 pub fn main() !void {
-    var window = try quark.Window.init("QuarkColorConverter", 450, 500);
+    var window = try quark.Window.init("QuarkColorConverter", 500, 530, .{
+        .icon_path = @embedFile("icon.png"),
+    });
     defer window.deinit();
 
-    const initial = "Enter either your HEX or RGB values and click \"Convert\"";
+    const initial = "Enter your HEX values and click \"Convert\"";
     @memcpy(result_text[0..initial.len], initial);
     result_len = initial.len;
 
@@ -49,53 +51,68 @@ pub fn main() !void {
 fn mainLayout(allocator: std.mem.Allocator) !quark.Widget.Column {
     var root = quark.Widget.Column.init(allocator);
     root.alignment = .start;
+    root.spacing = 15;
+    root.padding = 30;
 
     _ = try root.add(.{ .label = quark.Widget.Label.init("QuarkColorConverter") });
-    _ = try root.add(.{ .label = quark.Widget.Label.init("Effortlessly convert color codes to Quark's float values") });
-    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(10) });
+    _ = try root.add(.{ .label = quark.Widget.Label.init("Effortlessly convert color codes to RGB values") });
+    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(20) });
 
     _ = try root.add(.{ .label = quark.Widget.Label.init("Hex Color:") });
     var hex_field = quark.Widget.TextField.init(HEX_INPUT_ID, "#");
-    hex_field.width = 300;
-    hex_field.height = 35;
+
+    hex_field.width = quark.size.SizeConstraint.expanding(250, null);
+    hex_field.height = quark.size.SizeConstraint.fixed(40);
     _ = try root.add(.{ .textfield = hex_field });
-    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(10) });
 
-    _ = try root.add(.{ .label = quark.Widget.Label.init("RGB Values:") });
-    var rgb_row = quark.Widget.Row.init(allocator);
-    rgb_row.spacing = 5;
+    // _ = try root.add(.{ .label = quark.Widget.Label.init("RGB Values:") });
 
-    _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("R:") });
-    var r_field = quark.Widget.TextField.init(R_INPUT_ID, "0");
-    r_field.width = 80;
-    r_field.height = 35;
-    _ = try rgb_row.add(.{ .textfield = r_field });
+    // Add other color fields
+    // var rgb_row = quark.Widget.Row.init(allocator);
+    // rgb_row.spacing = 15;
+    // rgb_row.alignment = .start;
 
-    _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(20) });
-    _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("G:") });
-    var g_field = quark.Widget.TextField.init(G_INPUT_ID, "0");
-    g_field.width = 80;
-    g_field.height = 35;
-    _ = try rgb_row.add(.{ .textfield = g_field });
+    // _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("R:") });
+    // var r_field = quark.Widget.TextField.init(R_INPUT_ID, "0");
+    // // Expandable: shares extra width with siblings
+    // r_field.width = quark.size.SizeConstraint.expanding(80, 300);
+    // r_field.height = quark.size.SizeConstraint.fixed(40);
+    // _ = try rgb_row.add(.{ .textfield = r_field });
 
-    _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(20) });
-    _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("B:") });
-    var b_field = quark.Widget.TextField.init(B_INPUT_ID, "0");
-    b_field.width = 80;
-    b_field.height = 35;
-    _ = try rgb_row.add(.{ .textfield = b_field });
+    // _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(10) });
 
-    _ = try root.add(.{ .row = rgb_row });
-    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(10) });
+    // _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("G:") });
+    // var g_field = quark.Widget.TextField.init(G_INPUT_ID, "0");
+    // g_field.width = quark.size.SizeConstraint.expanding(80, 300);
+    // g_field.height = quark.size.SizeConstraint.fixed(40);
+    // _ = try rgb_row.add(.{ .textfield = g_field });
+
+    // _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(10) });
+
+    // _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("B:") });
+    // var b_field = quark.Widget.TextField.init(B_INPUT_ID, "0");
+    // b_field.width = quark.size.SizeConstraint.expanding(80, 300);
+    // b_field.height = quark.size.SizeConstraint.fixed(40);
+    // _ = try rgb_row.add(.{ .textfield = b_field });
+
+    // _ = try root.add(.{ .row = rgb_row });
 
     var button_row = quark.Widget.Row.init(allocator);
-    button_row.spacing = 10;
-    _ = try button_row.add(.{ .button = quark.Widget.Button.init("Convert", CONVERT_BUTTON_ID) });
-    _ = try button_row.add(.{ .button = quark.Widget.Button.init("Clear", CLEAR_BUTTON_ID) });
-    _ = try root.add(.{ .row = button_row });
-    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(20) });
+    button_row.spacing = 15;
+    button_row.alignment = .start;
 
-    _ = try root.add(.{ .label = quark.Widget.Label.init("Quark Float Values:") });
+    var convert_btn = quark.Widget.Button.init("Convert", CONVERT_BUTTON_ID);
+    convert_btn.width = quark.size.SizeConstraint.flexible(100, 90, 150);
+    _ = try button_row.add(.{ .button = convert_btn });
+
+    var clear_btn = quark.Widget.Button.init("Clear", CLEAR_BUTTON_ID);
+    clear_btn.width = quark.size.SizeConstraint.flexible(100, 90, 150);
+    _ = try button_row.add(.{ .button = clear_btn });
+
+    _ = try root.add(.{ .row = button_row });
+
+    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(20) });
+    // _ = try root.add(.{ .label = quark.Widget.Label.init("Quark Float Values:") });
     _ = try root.add(.{ .label = quark.Widget.Label.init(result_text[0..result_len]) });
 
     return root;
@@ -119,33 +136,33 @@ fn handleConvert(window: *quark.Window) void {
         }
     }
 
-    const r_field = &window.textfields.items[1];
-    const g_field = &window.textfields.items[2];
-    const b_field = &window.textfields.items[3];
+    // const r_field = &window.textfields.items[1];
+    // const g_field = &window.textfields.items[2];
+    // const b_field = &window.textfields.items[3];
 
-    const r = std.fmt.parseInt(u8, r_field.getText(), 10) catch {
-        const err = "Invalid R value, it must be between 0-255";
-        @memcpy(result_text[0..err.len], err);
-        result_len = err.len;
-        window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
-        return;
-    };
-    const g = std.fmt.parseInt(u8, g_field.getText(), 10) catch {
-        const err = "Invalid G value, it must be between 0-255";
-        @memcpy(result_text[0..err.len], err);
-        result_len = err.len;
-        window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
-        return;
-    };
-    const b = std.fmt.parseInt(u8, b_field.getText(), 10) catch {
-        const err = "Invalid B value, it must be between 0-255";
-        @memcpy(result_text[0..err.len], err);
-        result_len = err.len;
-        window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
-        return;
-    };
+    // const r = std.fmt.parseInt(u8, r_field.getText(), 10) catch {
+    //     const err = "Invalid R value, it must be between 0 and 255";
+    //     @memcpy(result_text[0..err.len], err);
+    //     result_len = err.len;
+    //     window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
+    //     return;
+    // };
+    // const g = std.fmt.parseInt(u8, g_field.getText(), 10) catch {
+    //     const err = "Invalid G value, it must be between 0 and 255";
+    //     @memcpy(result_text[0..err.len], err);
+    //     result_len = err.len;
+    //     window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
+    //     return;
+    // };
+    // const b = std.fmt.parseInt(u8, b_field.getText(), 10) catch {
+    //     const err = "Invalid B value, it must be between 0 and 255";
+    //     @memcpy(result_text[0..err.len], err);
+    //     result_len = err.len;
+    //     window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
+    //     return;
+    // };
 
-    formatResult(.{ r, g, b });
+    // formatResult(.{ r, g, b });
     window.setLayout(.{ .column = mainLayout(window.allocator) catch return }) catch return;
 }
 
@@ -163,19 +180,15 @@ fn handleClear(window: *quark.Window) void {
 fn parseHexColor(hex: []const u8) ?[3]u8 {
     if (hex.len != 6) return null;
 
-    const r = std.fmt.parseInt(u8, hex[0..2], 16) catch return;
-    const g = std.fmt.parseInt(u8, hex[2..4], 16) catch return;
-    const b = std.fmt.parseInt(u8, hex[4..6], 16) catch return;
+    const r = std.fmt.parseInt(u8, hex[0..2], 16) catch return undefined;
+    const g = std.fmt.parseInt(u8, hex[2..4], 16) catch return undefined;
+    const b = std.fmt.parseInt(u8, hex[4..6], 16) catch return undefined;
 
     return .{ r, g, b };
 }
 
 fn formatResult(rgb: [3]u8) void {
-    const r_float = @as(f32, @floatFromInt(rgb[0])) / 255.0;
-    const g_float = @as(f32, @floatFromInt(rgb[1])) / 255.0;
-    const b_float = @as(f32, @floatFromInt(rgb[2])) / 255.0;
-
-    const formatted = std.fmt.bufPrint(&result_text, ".{{ .r = {d:.3}, .g = {d:.3}, .b = {d:.3}, .a = 1.0 }}", .{ r_float, g_float, b_float }) catch {
+    const formatted = std.fmt.bufPrint(&result_text, "[..].theme.WidgetTheme.rgb({d}, {d}, {d}),", .{ rgb[0], rgb[1], rgb[2] }) catch {
         const err = "Error formatting result";
         @memcpy(result_text[0..err.len], err);
         result_len = err.len;

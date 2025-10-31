@@ -1,6 +1,6 @@
 .{
-    .name = .quark_color_converter,
-    .version = "0.1.0",
+    .name = .QuarkColorConverter,
+    .version = "0.2.0",
     .fingerprint = 0x44cb053a536b15b1,
     .minimum_zig_version = "0.15.0",
     .dependencies = .{
