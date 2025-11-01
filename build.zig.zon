@@ -1,7 +1,7 @@
 .{
     .name = .QuarkColorConverter,
     .version = "0.2.0",
-    .fingerprint = 0x44cb053a536b15b1,
+    .fingerprint = 0xcb55c2e6c2bd8b70,
     .minimum_zig_version = "0.15.0",
     .dependencies = .{
         .quark = .{
