@@ -13,7 +13,7 @@ var result_len: usize = 0;
 
 pub fn main() !void {
     var window = try quark.Window.init("QuarkColorConverter", 500, 530, .{
-        .icon_path = @embedFile("icon.png"),
+        .app_icon = @embedFile("icon.png"),
     });
     defer window.deinit();
 
