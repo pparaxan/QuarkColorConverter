@@ -48,72 +48,72 @@ pub fn main() !void {
     }
 }
 
-fn mainLayout(allocator: std.mem.Allocator) !quark.Widget.Column {
-    var root = quark.Widget.Column.init(allocator);
+fn mainLayout(allocator: std.mem.Allocator) !quark.widget.Column {
+    var root = quark.widget.Column.init(allocator);
     root.alignment = .start;
     root.spacing = 15;
     root.padding = 30;
 
-    _ = try root.add(.{ .label = quark.Widget.Label.init("QuarkColorConverter") });
-    _ = try root.add(.{ .label = quark.Widget.Label.init("Effortlessly convert color codes to RGB values") });
-    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(20) });
+    _ = try root.add(.{ .label = quark.widget.Label.init("QuarkColorConverter") });
+    _ = try root.add(.{ .label = quark.widget.Label.init("Effortlessly convert color codes to RGB values") });
+    _ = try root.add(.{ .spacer = quark.widget.Spacer.fixedHeight(20) });
 
-    _ = try root.add(.{ .label = quark.Widget.Label.init("Hex Color:") });
-    var hex_field = quark.Widget.TextField.init(HEX_INPUT_ID, "#");
+    _ = try root.add(.{ .label = quark.widget.Label.init("Hex Color:") });
+    var hex_field = quark.widget.TextField.init(HEX_INPUT_ID, "#");
 
     hex_field.width = quark.size.SizeConstraint.expanding(250, null);
     hex_field.height = quark.size.SizeConstraint.fixed(40);
     _ = try root.add(.{ .textfield = hex_field });
 
-    // _ = try root.add(.{ .label = quark.Widget.Label.init("RGB Values:") });
+    // _ = try root.add(.{ .label = quark.widget.Label.init("RGB Values:") });
 
     // Add other color fields
-    // var rgb_row = quark.Widget.Row.init(allocator);
+    // var rgb_row = quark.widget.Row.init(allocator);
     // rgb_row.spacing = 15;
     // rgb_row.alignment = .start;
 
-    // _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("R:") });
-    // var r_field = quark.Widget.TextField.init(R_INPUT_ID, "0");
+    // _ = try rgb_row.add(.{ .label = quark.widget.Label.init("R:") });
+    // var r_field = quark.widget.TextField.init(R_INPUT_ID, "0");
     // // Expandable: shares extra width with siblings
     // r_field.width = quark.size.SizeConstraint.expanding(80, 300);
     // r_field.height = quark.size.SizeConstraint.fixed(40);
     // _ = try rgb_row.add(.{ .textfield = r_field });
 
-    // _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(10) });
+    // _ = try rgb_row.add(.{ .spacer = quark.widget.Spacer.fixedWidth(10) });
 
-    // _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("G:") });
-    // var g_field = quark.Widget.TextField.init(G_INPUT_ID, "0");
+    // _ = try rgb_row.add(.{ .label = quark.widget.Label.init("G:") });
+    // var g_field = quark.widget.TextField.init(G_INPUT_ID, "0");
     // g_field.width = quark.size.SizeConstraint.expanding(80, 300);
     // g_field.height = quark.size.SizeConstraint.fixed(40);
     // _ = try rgb_row.add(.{ .textfield = g_field });
 
-    // _ = try rgb_row.add(.{ .spacer = quark.Widget.Spacer.fixedWidth(10) });
+    // _ = try rgb_row.add(.{ .spacer = quark.widget.Spacer.fixedWidth(10) });
 
-    // _ = try rgb_row.add(.{ .label = quark.Widget.Label.init("B:") });
-    // var b_field = quark.Widget.TextField.init(B_INPUT_ID, "0");
+    // _ = try rgb_row.add(.{ .label = quark.widget.Label.init("B:") });
+    // var b_field = quark.widget.TextField.init(B_INPUT_ID, "0");
     // b_field.width = quark.size.SizeConstraint.expanding(80, 300);
     // b_field.height = quark.size.SizeConstraint.fixed(40);
     // _ = try rgb_row.add(.{ .textfield = b_field });
 
     // _ = try root.add(.{ .row = rgb_row });
 
-    var button_row = quark.Widget.Row.init(allocator);
+    var button_row = quark.widget.Row.init(allocator);
     button_row.spacing = 15;
     button_row.alignment = .start;
 
-    var convert_btn = quark.Widget.Button.init("Convert", CONVERT_BUTTON_ID);
+    var convert_btn = quark.widget.Button.init("Convert", CONVERT_BUTTON_ID);
     convert_btn.width = quark.size.SizeConstraint.flexible(100, 90, 150);
     _ = try button_row.add(.{ .button = convert_btn });
 
-    var clear_btn = quark.Widget.Button.init("Clear", CLEAR_BUTTON_ID);
+    var clear_btn = quark.widget.Button.init("Clear", CLEAR_BUTTON_ID);
     clear_btn.width = quark.size.SizeConstraint.flexible(100, 90, 150);
     _ = try button_row.add(.{ .button = clear_btn });
 
     _ = try root.add(.{ .row = button_row });
 
-    _ = try root.add(.{ .spacer = quark.Widget.Spacer.fixedHeight(20) });
-    // _ = try root.add(.{ .label = quark.Widget.Label.init("Quark Float Values:") });
-    _ = try root.add(.{ .label = quark.Widget.Label.init(result_text[0..result_len]) });
+    _ = try root.add(.{ .spacer = quark.widget.Spacer.fixedHeight(20) });
+    // _ = try root.add(.{ .label = quark.widget.Label.init("Quark Float Values:") });
+    _ = try root.add(.{ .label = quark.widget.Label.init(result_text[0..result_len]) });
 
     return root;
 }
