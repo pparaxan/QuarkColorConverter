@@ -49,6 +49,8 @@ pub fn build(b: *std.Build) void {
     });
     b.getInstallStep().dependOn(&install_shaders.step);
 
+    exe.subsystem = .Windows;
+
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
