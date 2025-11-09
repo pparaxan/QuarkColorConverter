@@ -41,14 +41,6 @@ pub fn build(b: *std.Build) void {
         exe.linkSystemLibrary("kernel32");
     }
 
-    const libquark_shaders = libquark.namedWriteFiles("shaders");
-    const install_shaders = b.addInstallDirectory(.{
-        .source_dir = libquark_shaders.getDirectory(),
-        .install_dir = .bin,
-        .install_subdir = "shaders",
-    });
-    b.getInstallStep().dependOn(&install_shaders.step);
-
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
