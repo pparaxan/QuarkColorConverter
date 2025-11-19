@@ -22,19 +22,6 @@ pub fn build(b: *std.Build) void {
 
     exe.linkLibrary(libquarka);
 
-    const vulkan_sdk = std.process.getEnvVarOwned(b.allocator, "VULKAN_SDK") catch |err| {
-        std.debug.print("Vulkan SDK wasn't found.\n", .{});
-        std.debug.print("Error: {}\n", .{err});
-        return;
-    };
-    defer b.allocator.free(vulkan_sdk);
-
-    const vulkan_lib = std.fs.path.join(b.allocator, &.{ vulkan_sdk, "Lib" }) catch unreachable;
-    defer b.allocator.free(vulkan_lib);
-
-    exe.addLibraryPath(.{ .cwd_relative = vulkan_lib });
-    exe.linkSystemLibrary("vulkan-1");
-
     if (@import("builtin").os.tag == .windows) {
         exe.linkSystemLibrary("user32");
         exe.linkSystemLibrary("gdi32");
