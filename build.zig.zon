@@ -5,8 +5,8 @@
     .minimum_zig_version = "0.15.0",
     .dependencies = .{
         .quark = .{
-            .url = "git+https://codeberg.org/pparaxan/Quark#fd56989d709bf3f2453c5787bd5ea16ee1ed47a6",
-            .hash = "quark-0.0.1-Uqg3xtaBAwDfL7AQ2NGHpOFjBLUDaH-j4ec_CvXmQr2d",
+            .url = "git+https://codeberg.org/pparaxan/Quark#2765d827564d842c5e286842b1bc564c03516e84",
+            .hash = "quark-0.0.1-Uqg3xhuDBQBzdHsilBRoKC8m26efzmR2d1YorsCjaqvq",
         },
     },
     .paths = .{

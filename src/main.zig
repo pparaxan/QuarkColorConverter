@@ -13,7 +13,7 @@ var result_text: [256]u8 = undefined;
 var result_len: usize = 0;
 
 pub fn main() !void {
-    var window = try quark.Window.init("QuarkColorConverter", 550, 650, .{
+    var window = try quark.Window.init("QuarkColorConverter", "0.3.0", 550, 650, .{
         .app_icon = @embedFile("icon.png"),
     });
     defer window.deinit();

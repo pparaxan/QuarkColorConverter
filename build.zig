@@ -22,14 +22,7 @@ pub fn build(b: *std.Build) void {
 
     exe.linkLibrary(libquarka);
 
-    if (@import("builtin").os.tag == .windows) {
-        exe.linkSystemLibrary("user32");
-        exe.linkSystemLibrary("gdi32");
-        exe.linkSystemLibrary("kernel32");
-    }
-
-    exe.subsystem = .Windows;
-
+    if (@import("builtin").os.tag == .windows) exe.subsystem = .Windows;
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);
