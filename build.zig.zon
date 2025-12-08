@@ -1,12 +1,12 @@
 .{
     .name = .QuarkColorConverter,
-    .version = "0.2.0",
+    .version = "0.3.0",
     .fingerprint = 0xcb55c2e6c2bd8b70,
     .minimum_zig_version = "0.15.0",
     .dependencies = .{
         .quark = .{
-            .url = "git+https://codeberg.org/pparaxan/Quark#7c20af5623c24a8e357cfb0d15cace5efead39f7",
-            .hash = "quark-0.0.1-Uqg3xpuEAwCe96LaIowmVfQMjrJrl8LDK6fB4GGfCHaI",
+            .url = "git+https://codeberg.org/pparaxan/Quark#2765d827564d842c5e286842b1bc564c03516e84",
+            .hash = "quark-0.0.1-Uqg3xhuDBQBzdHsilBRoKC8m26efzmR2d1YorsCjaqvq",
         },
     },
     .paths = .{
